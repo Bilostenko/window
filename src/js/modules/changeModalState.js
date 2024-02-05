@@ -7,18 +7,44 @@ const changeModalState = (state) => {
     windowType = document.querySelectorAll('#view_type'),
     windowProfile = document.querySelectorAll('.checkbox');
 
-    checkNumInputs('#width');
-    checkNumInputs('#height');
+  checkNumInputs('#width');
+  checkNumInputs('#height');
 
-    function bindActionToElem(event, elem, prop) {
-      elem.forEach((item, i) => {
-        item.addEventListener(event, () => {
-          state[prop] = i
-          console.log(state)
-        })
-      })
-    }
+  function bindActionToElems(event, elem, prop) {
+    elem.forEach((item, i) => {
+      item.addEventListener(event, () => {
+        switch (item.nodeName) {
+          case 'SPAN':
+            state[prop] = i;
+            break;
+          case 'INPUT':
+            if (item.getAttribute('type') === 'checkbox') {
+              i === 0 ? state[prop] = "Холодное" : state[prop] = "Теплое";
+              elem.forEach((box, j) => {
+                box.checked = false;
+                if (i == j) {
+                  box.checked = true;
+                }
+              });
+            } else {
+              state[prop] = item.value;
+            }
+            break;
+          case 'SELECT':
+            state[prop] = item.value;
+            break;
+        }
 
+        console.log(state);
+      });
+    });
+  }
+
+  bindActionToElems('click', windowForm, 'form')
+  bindActionToElems('input', windowWidth, 'width')
+  bindActionToElems('input', windowHeight, 'height')
+  bindActionToElems('change', windowType, 'type')
+  bindActionToElems('change', windowProfile, 'profile')
 }
 
 export default changeModalState
